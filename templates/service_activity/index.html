@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block contain %}
+    <div class="alert alert-{{ message.tags }}">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <strong>{{ message }}</strong>
+    </div>
+    最近一次维修活动日期:{{ recent_activity_date }}<br>
+    地点:{{ recent_activity_place }}<br>
+    状态:{{ recent_activity_flag }}<br>
+    这是第{{ int_id }}次活动,此次活动已为{{ recent_service_objects_count }}台电脑服务<br>
+    累计为{{ sum_service_objects_count }}台电脑服务<br>
+    <h2>测试一下</h2>
+{% endblock contain %}

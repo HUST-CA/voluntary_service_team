@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block contain %}
+    <div class="alert alert-{{ message.tags }}">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <strong>{{ message }}</strong>
+    </div>
+
+    <h2>个人页面</h2>
+    姓名:{{ name }}<br/>
+    电脑品牌/型号:{{ computer_model }}<br/>
+    电脑故障:{{ problem }}<br/>
+    状态:{{ flag }}<br/>
+    {% if flag == "遇到问题需反馈" %}
+        遇到的问题:{{ trouble }}<br/>
+    {% endif %}
+{% endblock contain %}

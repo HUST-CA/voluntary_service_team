@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block contain %}
+    <div class="alert alert-{{ message.tags }}">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <strong>{{ message }}</strong>
+    </div>
+
+    <h2>填service表格</h2>
+    <form method="post" action="">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">提交</button>
+    </form>
+{% endblock contain %}

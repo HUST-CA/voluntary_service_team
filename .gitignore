@@ -1,0 +1,6 @@
+*.pyc
+voluntary_service_team/secure_settings.py
+db.sqlite3
+.idea/
+staticfiles/
+
