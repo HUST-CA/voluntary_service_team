@@ -8,7 +8,7 @@ class IndexView(View):
     # 前端展示最近一次维修活动的日期地点次数
     def get(self, request):
         context = dict()
-        recent_activity = ServiceActivity.objects.recent_activity
+        recent_activity = ServiceActivity.objects.recent_activity()
         recent_activity_date = ServiceActivity.objects.recent_activity_date()
         recent_service_objects_count = ServiceObject.objects.count_the_recent_number()
         sum_service_objects_count = ServiceObject.objects.count_the_sum_number()

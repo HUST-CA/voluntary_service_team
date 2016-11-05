@@ -5,7 +5,7 @@
         <a href="#" class="close" data-dismiss="alert">&times;</a>
         <strong>{{ message }}</strong>
     </div>
-    最近一次维修活动日期:{{ recent_activity_date }}<br>
+    最近一次维修活动日期:{{ recent_activity_date|date:'Y-m-d' }}<br>
     地点:{{ recent_activity_place }}<br>
     状态:{{ recent_activity_flag }}<br>
     这是第{{ int_id }}次活动,此次活动已为{{ recent_service_objects_count }}台电脑服务<br>

@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import ServiceObject
+from django.contrib.auth.models import Group, User
 
 
 def make_complete(modeladmin, request, queryset):
@@ -21,7 +22,7 @@ class ServiceObjectAdmin(admin.ModelAdmin):
     list_filter = ('flag', 'service_activity')
     fieldsets = (
         ('个人信息', {'fields': ('name', 'tel', 'computer_model', 'problem')}),
-        ('后台记录', {'fields': ('send_time', 'short_link', 'service_activity')}),
+        ('后台记录', {'fields': ('short_link', 'service_activity')}),
         ('状态', {'fields': ('flag', 'trouble')}),
     )
     search_fields = ('name', 'tel')
@@ -30,3 +31,5 @@ class ServiceObjectAdmin(admin.ModelAdmin):
 
 
 admin.site.register(ServiceObject, ServiceObjectAdmin)
+admin.site.unregister(Group)
+admin.site.unregister(User)

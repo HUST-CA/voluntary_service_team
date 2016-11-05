@@ -19,7 +19,7 @@ from django.contrib import admin
 from service_activity.views import IndexView
 
 urlpatterns = [
-    url(r'^home', IndexView.as_view(), name='home'),
+    url(r'^home/$', IndexView.as_view(), name='home'),
     url(r'^admin/', admin.site.urls),
     url(r'', include('service_inform.urls')),
 ]

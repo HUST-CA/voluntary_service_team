@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.http import HttpResponseRedirect, HttpResponse
+from django.core.urlresolvers import reverse
 from django.views.generic import View
 
 # import string
@@ -28,17 +28,29 @@ class ServiceFormView(View):
         flag = '修理中'
         form = ServiceObjectForm(request.POST)
         if form.is_valid():
-            service_object = ServiceObject(**form.clean_data, send_time=send_time, flag=flag)
+            service_object = ServiceObject(**form.cleaned_data, send_time=send_time, flag=flag)
             service_object.service_activity = ServiceActivity.objects.recent_activity()
             service_object.save()
             service_object.short_link = ShortLink(service_object.pk).generate()
             service_object.save()
             messages.add_message(request, messages.SUCCESS, '提交成功')
+
+            print(service_object.short_link)
+
             return HttpResponseRedirect(
-                reverse(self.redirect_view_name, kwargs={'short_link': service_object.short_link}))
+                reverse(self.redirect_view_name, kwargs={'pk': service_object.pk}))
         else:
             messages.add_message(request, messages.WARNING, '表单有误')
             return render(request, self.template_name, {'form': form})
+
+
+class ShortLinkRedirect(View):
+    redirect_view_name = 'service_inform:own_flag'
+
+    def get(self, request, short_link):
+        s = get_object_or_404(ServiceObject, short_link=short_link)
+        pk = s.pk
+        return HttpResponseRedirect(reverse(self.redirect_view_name, kwargs={'pk': pk}))
 
 
 class OwnFlagView(View):
@@ -54,12 +66,3 @@ class OwnFlagView(View):
         if s.flag == '遇到问题需反馈':
             context['trouble'] = s.trouble
         return render(request, self.template_name, context=context)
-
-
-class ShortLinkRedirect(View):
-    view_name = 'service_inform:own_flag'
-
-    def get(self, short_link):
-        s = get_object_or_404(ServiceObject, short_link=short_link)
-        pk = s.pk
-        return HttpResponseRedirect(reverse(self.view_name, kwargs={'pk': pk}))

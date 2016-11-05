@@ -127,16 +127,16 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-from . import secure_settings
+# from . import secure_settings
 
-# SMTP
-EMAIL_HOST = secure_settings.EMAIL_HOST
-EMAIL_HOST_USER = secure_settings.EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD = secure_settings.EMAIL_HOST_PASSWORD
-EMAIL_PORT = secure_settings.EMAIL_PORT
-EMAIL_USE_TLS = secure_settings.EMAIL_USE_TLS
-
-# SMS API
-APPKEY = secure_settings.APPKEY
-SECRET = secure_settings.SECRET
-SMS_TEMPLATE_CODE = secure_settings.SMS_TEMPLATE_CODE
+# # SMTP
+# EMAIL_HOST = secure_settings.EMAIL_HOST
+# EMAIL_HOST_USER = secure_settings.EMAIL_HOST_USER
+# EMAIL_HOST_PASSWORD = secure_settings.EMAIL_HOST_PASSWORD
+# EMAIL_PORT = secure_settings.EMAIL_PORT
+# EMAIL_USE_TLS = secure_settings.EMAIL_USE_TLS
+#
+# # SMS API
+# APPKEY = secure_settings.APPKEY
+# SECRET = secure_settings.SECRET
+# SMS_TEMPLATE_CODE = secure_settings.SMS_TEMPLATE_CODE

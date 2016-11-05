@@ -5,6 +5,7 @@ from service_activity.models import ServiceActivity
 class ServiceObjectManager(models.Manager):
     def the_most_recent_service_objects(self):
         '''返回最近一次维修活动的所有服务对象'''
+        # Be careful! The lib 'pytz' must be installed!
         most_recent_date = ServiceActivity.objects.recent_activity_date()
         service_objects = self.get_queryset().filter(send_time__date=most_recent_date)
         return service_objects
@@ -38,7 +39,7 @@ class ServiceObject(models.Model):
     objects = ServiceObjectManager()
 
     def __str__(self):
-        return self.name + '-' + self.code
+        return self.name + '-' + self.short_link
 
     class Meta:
         verbose_name = '服务对象'

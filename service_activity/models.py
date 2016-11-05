@@ -27,8 +27,7 @@ class ServiceActivityManager(models.Manager):
 
     def recent_activity(self):
         '''返回最近一次的活动'''
-        return self.get_queryset().filter(int_id=self.count_activities())[0]
-        # 测试环境下可能会有多个返回结果,故不使用get
+        return self.get_queryset().get(int_id=self.count_activities())
 
     def recent_activity_date(self):
         '''返回最近一次的活动日期'''
@@ -41,11 +40,15 @@ class ServiceActivity(models.Model):
     place = models.CharField(verbose_name='地点', max_length=128)
     FLAGS = (('进行中', '进行中'), ('已完成', '已完成'))
     flag = models.CharField(verbose_name='状态', max_length=16, choices=FLAGS)
-    int_id = models.IntegerField(verbose_name='第几次活动')  # this should be filled when it's created
+    int_id = models.IntegerField(verbose_name='第几次活动')
 
     members = models.ManyToManyField(Member, related_name='activities', verbose_name='成员', blank=True)
 
-    objects = ServiceActivityManager
+    objects = ServiceActivityManager()
 
     def __str__(self):
-        return self.activity_time + '于' + self.place
+        return self.activity_date.strftime('%Y-%m-%d') + ' 于 ' + self.place
+
+    class Meta:
+        verbose_name = '维修活动'
+        verbose_name_plural = '维修活动'
