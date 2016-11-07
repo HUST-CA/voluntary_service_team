@@ -1,0 +1,1 @@
+default_app_config = 'service_inform.apps.ServiceInformConfig'

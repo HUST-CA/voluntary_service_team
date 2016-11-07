@@ -1,24 +1,20 @@
 import urllib.request
 import urllib.parse
 import http.client
-import threading
-import json
-
-from voluntary_service_team.secure_settings import APIKEY
 
 
 class SMS:
     def __init__(self, **kwargs):
         # apikey.可在官网（http://www.yuanpian.com)登录后获取
-        self.apikey = kwargs['apikey']
+        self.apikey = kwargs.get('apikey')
         # 短信内容
-        self.text = kwargs['text']
+        self.text = kwargs.get('text')
         # 接收者手机号
-        self.mobile = kwargs['mobile']
+        self.mobile = kwargs.get('mobile')
         # template_id
-        self.tpl_id = kwargs['tpl_id']
+        self.tpl_id = kwargs.get('tpl_id')
         # template_value
-        self.tpl_value = kwargs['tpl_value']
+        self.tpl_value = kwargs.get('tpl_value')
 
         # 服务地址
         self.sms_host = "sms.yunpian.com"
@@ -79,17 +75,11 @@ class SMS:
         conn.close()
         return response_str
 
-# 封装成线程比较好
-# class SMSThread(threading.Thread):
-#     def __init__(self):
-#         pass
-#
-#     def run(self):
-#         pass
-
 
 if __name__ == '__main__':
-    # 作为测试
+    # a simple test
+    from voluntary_service_team.secure_settings import APIKEY
+
     kwargs = dict()
     kwargs['apikey'] = APIKEY
     kwargs['text'] = "【计算机协会】#type#学习小组将于#time#在#locate#进行第#times#授课，欢迎你来参加哦~收到请点击确认：huca.tech/#code#"
@@ -97,5 +87,5 @@ if __name__ == '__main__':
     kwargs['tpl_id'] = 1599182
     kwargs['tpl_value'] = {'#type#': '视频制作', '#time#': '今晚', '#locate#': '东九ac', '#times#': '1', '#code#': 'aafb'}
     sms = SMS(**kwargs)
-    sms.get_user_info()  # 测试获取用户信息
-    sms.tpl_send_sms()  # 测试发送模板短信
+    sms.get_user_info()  # test the status of getting user's info
+    sms.tpl_send_sms()  # test the sms_sending function

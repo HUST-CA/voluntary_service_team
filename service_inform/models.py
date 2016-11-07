@@ -28,11 +28,9 @@ class ServiceObject(models.Model):
     send_time = models.DateTimeField(verbose_name='送到时间', auto_now_add=True)
     FLAGS = (('完成', '完成'), ('修理中', '修理中'), ('已取回', '已取回'), ('遇到问题需反馈', '遇到问题需反馈'))
     flag = models.CharField(verbose_name='修理状态', max_length=64, choices=FLAGS)
-    trouble = models.TextField(verbose_name='遇到问题需反馈', blank=True)
-    # 短链接生成法则:电话号码+id --> 6位含字母和数字的短链接
-    # use the random code and tel together to build an Unique Identifier
-    # the link 'hostname/short_link/' will be redirect to 'hostname/pk/'
+    trouble = models.TextField(verbose_name='遇到的问题', blank=True)
     short_link = models.CharField(verbose_name='短链接', max_length=32)
+    serial_number = models.CharField(verbose_name='取货号', max_length=16)
 
     service_activity = models.ForeignKey(ServiceActivity, related_name='service_objects', verbose_name='从属哪次活动')
 

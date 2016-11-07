@@ -19,6 +19,7 @@ make_done.short_description = "把选中的ServiceObject的flag改为 已取回 
 
 
 class ServiceObjectAdmin(admin.ModelAdmin):
+    list_display = ('name', 'tel', 'flag', 'trouble', 'serial_number', 'short_link')
     list_filter = ('flag', 'service_activity')
     fieldsets = (
         ('个人信息', {'fields': ('name', 'tel', 'computer_model', 'problem')}),
