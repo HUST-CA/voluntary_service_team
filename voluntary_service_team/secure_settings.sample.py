@@ -5,9 +5,10 @@ EMAIL_PORT = 25
 EMAIL_USE_TLS = False
 
 # Cloud messaging API
-APPKEY = ''
-SECRET = ''
+APIKEY = ''
 
-SMS_TEMPLATE_CODE_INFORM = ''
-SMS_TEMPLATE_CODE_PROBLEM = ''
-SMS_TEMPLATE_CODE_SUCCESS = ''
+TPL_ID = {
+	"receive":"",
+	"finish":"",
+	"trouble":""
+}

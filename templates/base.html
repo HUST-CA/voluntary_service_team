@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 {% load staticfiles %}
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta name="description" content="HUSTCA义务维修队">
     <meta name="author" content="Silhouette">
     <link rel="shortcut icon" href="{% static 'site/icon/favicon.jpg' %}">
@@ -16,6 +16,7 @@
     <!-- Custom styles for this site -->
     {% block styles %}
         <link href="{% static 'site/css/main.css' %}" rel="stylesheet">
+        <link href="{% static 'site/css/reset.css' %}" rel="stylesheet">
     {% endblock %}
 
     <!-- Custom tags for the head tag -->

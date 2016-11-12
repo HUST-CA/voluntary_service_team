@@ -1,17 +1,38 @@
 {% extends 'base.html' %}
 
 {% block contain %}
-    <div class="alert alert-{{ message.tags }}">
-        <a href="#" class="close" data-dismiss="alert">&times;</a>
-        <strong>{{ message }}</strong>
-    </div>
+<!--这里是一个关闭按钮，但是我感觉并不需要用到。-->
+<!--<div class="alert alert-{{ message.tags }}">-->
+<!--<a href="#" class="close" data-dismiss="alert">&times;</a>-->
+<!--<strong>{{ message }}</strong>-->
+<!--</div>-->
 
+<div class="middle-container">
+  <div class="middle-wrap">
     <h2>个人页面</h2>
-    姓名:{{ name }}<br/>
-    电脑品牌/型号:{{ computer_model }}<br/>
-    电脑故障:{{ problem }}<br/>
-    状态:{{ flag }}<br/>
-    {% if flag == "遇到问题需反馈" %}
-        遇到的问题:{{ trouble }}<br/>
-    {% endif %}
+    <div class="single-container">
+      <p>
+      姓名:{{ name }}
+      </p>
+    </div>
+    <div class="single-container">
+      <p>
+      电脑品牌/型号:{{ computer_model }}
+      </p>
+    </div>
+    <div class="single-container">
+      <p>
+      电脑故障:{{ problem }}
+      </p>
+    </div>
+    <div class="single-container">
+      <p>
+      状态:{{ flag }}<br/>
+      {% if flag == "遇到问题需反馈" %}
+      遇到的问题:{{ trouble }}<br/>
+      {% endif %}
+      </p>
+    </div>
+  </div>
+</div>
 {% endblock contain %}
