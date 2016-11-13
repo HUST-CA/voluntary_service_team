@@ -16,7 +16,7 @@ class SMSThread(threading.Thread):
             '''
             self.params = {'apikey': APIKEY,
                            'tpl_id': TPL_ID['receive'],
-                           'tpl_value': {"#code#": kwargs['short_link'], "#code1#": kwargs['short_link']},
+                           'tpl_value': {"#code#": kwargs['short_link'], "#code1#": kwargs['serial_number']},
                            'mobile': receiver_mobile}
         elif status == '完成':
             self.name = '【完成】' + receiver_mobile
@@ -25,9 +25,11 @@ class SMSThread(threading.Thread):
             请凭 #code# 提取电脑哦！
             https://huca.tech/#code1#
             """
+            # 注意：这里 code1 是短链接，code 是取货号，而上面一条反过来。
+            # 请自行找 PM 解决
             self.params = {'apikey': APIKEY,
                            'tpl_id': TPL_ID['finish'],
-                           'tpl_value': {"#code#": kwargs['short_link'], "#code1#": kwargs['short_link']},
+                           'tpl_value': {"#code1#": kwargs['short_link'], "#code#": kwargs['serial_number']},
                            'mobile': receiver_mobile}
         elif status == '遇到问题需反馈':
             self.name = '【遇到问题】' + receiver_mobile

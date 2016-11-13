@@ -1,6 +1,5 @@
 import base64
-import random
-
+import hashlib
 
 class ShortLink:
     def __init__(self, id):
@@ -15,12 +14,12 @@ class ShortLink:
 class SerialNumber:
     def __init__(self, id, tel):
         self.id = str(id)
-        self.tel = list(str(tel))
+        self.tel = tel
+        self.md5_gen = hashlib.md5()
 
     def generate(self):
-        serial_number_list = list(ShortLink(self.id).generate())+random.sample(self.tel, 4)
-        random.shuffle(serial_number_list)
-        return ''.join(serial_number_list)
+        self.md5_gen.update(self.tel.encode())
+        return ''.join(list(map(lambda x: str(x).zfill(3), self.md5_gen.digest()[0:2])))
 
 
 if __name__ == '__main__':

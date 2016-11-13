@@ -17,17 +17,20 @@ def inform(sender, instance, created, **kwargs):
         if instance.flag == '修理中':
             SMSThread(receiver_mobile=instance.tel,
                       status='收到',
-                      short_link=instance.short_link).start()
+                      short_link=instance.short_link,
+                      serial_number=instance.serial_number).start()
         # send the finish sms
         if instance.flag == '完成':
             SMSThread(receiver_mobile=instance.tel,
                       status='完成',
-                      short_link=instance.short_link).start()
+                      short_link=instance.short_link,
+                      serial_number=instance.serial_number).start()
         # send the trouble sms
         elif instance.flag == '遇到问题需反馈':
             SMSThread(receiver_mobile=instance.tel,
                       status='遇到问题需反馈',
-                      reason=instance.trouble).start()
+                      reason=instance.trouble,
+                      serial_number=instance.serial_number).start()
         # when it comes to exceptions, just pass it
         else:
             pass
