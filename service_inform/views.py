@@ -33,7 +33,7 @@ class ServiceFormView(View):
             service_object.service_activity = ServiceActivity.objects.recent_activity()
             service_object.save()
             service_object.short_link = ShortLink(service_object.pk).generate()
-            service_object.serial_number = SerialNumber(service_object.pk, service_object.tel).generate()
+            service_object.serial_number = SerialNumber(service_object.pk).generate()
             service_object.save()
             messages.add_message(request, messages.SUCCESS, '提交成功')
 
