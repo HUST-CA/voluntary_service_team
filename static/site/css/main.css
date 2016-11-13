@@ -1,3 +1,115 @@
-body, button, input, select, textarea, h1, h2, h3, h4, h5, h6 a {
-    font-family: Microsoft YaHei, '宋体', Tahoma, Helvetica, Arial, "\5b8b\4f53", sans-serif;
+html {
+  font-size : 20px;
+  height: 100%;
+  background-color: #000;
 }
+body {
+  height: 100%;
+  min-width: 400px;
+  background-position: top;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-image: url('/static/site/img/hustca_logo.png');
+  background-color: #000;
+  /*background-color: #f1f1f1;*/
+  overflow-y: scroll;
+}
+
+.middle-container {
+  width: 90%;
+  max-width: 25rem;
+  margin: 0 auto;
+  padding: 4rem 0;
+}
+
+.middle-wrap {
+  color: #FFFFFF;
+  width: 90%;
+  margin: 0 auto;
+  padding: 2rem;
+  /*background-color: #FFFFFF;*/
+  /*background-color: #9C27B0;*/
+  background-color: rgba(55, 55, 55, 0.8);
+  /*box-shadow: 0px 1px 4px #ArA;*/
+}
+
+.middle-wrap h2 {
+  font-size: 1.5rem;
+  text-align: center;
+  padding: .3rem;
+}
+
+.middle-wrap p {
+  width: 100%;
+  font-size: 1rem;
+}
+
+.middle-wrap p label {
+  display: none;
+}
+
+input {
+  background-color: #444444;
+  display: block;
+  padding: .4rem;
+  margin: 1rem auto;
+  transition: border .2s;
+  border: 2px solid #d1d1d1;
+  outline: none;
+  width: 80%;
+}
+/*input:-webkit-autofill {*/
+  /*background-color: #FFF;*/
+/*}*/
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:focus {
+  /*border: 1px solid green;*/
+  -webkit-text-fill-color: #FFFFFF;
+  -webkit-box-shadow: 0 0 0px 1000px #333333 inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+input:focus {
+  border: 2px solid #a1a1a1;
+}
+
+textarea {
+  background-color: #444444;
+  margin: 1rem auto;
+  display: block;
+  width: 80%;
+  padding: .3rem;
+  resize: none;
+  outline: none;
+  transition: border .2s;
+  border: 2px solid #d1d1d1;
+}
+textarea:focus {
+  border: 2px solid #a1a1a1;
+}
+button:focus {
+  background-color: #5E35B1;
+}
+
+button {
+  border: 2px solid #d1d1d1;
+  background-color: #673AB7;
+  box-shadow: none;
+  width: 8rem;
+  padding: .5rem;
+  display: block;
+  margin: 2rem auto;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.single-container p{
+  padding: .8rem;
+}
+
+
