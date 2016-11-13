@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views.generic import View
+from django.core.exceptions import ObjectDoesNotExist
 
 # import string
 # import random
@@ -30,7 +31,12 @@ class ServiceFormView(View):
         form = ServiceObjectForm(request.POST)
         if form.is_valid():
             service_object = ServiceObject(**form.cleaned_data, send_time=send_time, flag=flag)
-            service_object.service_activity = ServiceActivity.objects.recent_activity()
+            try:
+                service_object.service_activity = ServiceActivity.objects.recent_activity()
+            except ObjectDoesNotExist as e:
+                messages.add_message(request, messages.WARNING, 'No Activity for now!')
+                return render(request, self.template_name, {'form': form})
+
             service_object.save()
             service_object.short_link = ShortLink(service_object.pk).generate()
             service_object.serial_number = SerialNumber(service_object.pk).generate()

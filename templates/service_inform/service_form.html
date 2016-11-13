@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block contain %}
+
 <!--这里是一个关闭按钮，但是我感觉并不需要用到。-->
 <!--<div class="alert alert-{{ message.tags }}">-->
 <!--<a href="#" class="close" data-dismiss="alert">&times;</a>-->
@@ -9,6 +10,14 @@
 
 <div class="middle-container">
   <div class="middle-wrap">
+      {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.level_tag }}">
+                <a href="#" class="close" data-dismiss="alert">&times;</a>
+                <strong>{% if 'safe' in message.tags %}{{ message|safe }}{% else %}{{ message }}{% endif %}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
     <h2>填写信息</h2>
     <form method="post" action="">
       {% csrf_token %}
