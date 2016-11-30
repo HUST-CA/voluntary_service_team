@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import ServiceObject
+from .models import ServiceObject, SMS_Feedback
 from django.contrib.auth.models import Group, User
 
 
@@ -18,6 +18,11 @@ def make_done(modeladmin, request, queryset):
 make_done.short_description = "把选中的ServiceObject的flag改为 已取回 "
 
 
+class SMSFeedbackInline(admin.TabularInline):
+    model = SMS_Feedback
+    extra = 1
+
+
 class ServiceObjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'tel', 'flag', 'trouble', 'serial_number', 'short_link')
     list_filter = ('flag', 'service_activity')
@@ -29,6 +34,7 @@ class ServiceObjectAdmin(admin.ModelAdmin):
     search_fields = ('name', 'tel')
     filter_horizontal = ()
     actions = [make_complete, make_done]
+    inlines = [SMSFeedbackInline, ]
 
 
 admin.site.register(ServiceObject, ServiceObjectAdmin)

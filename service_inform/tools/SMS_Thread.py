@@ -1,8 +1,8 @@
 import threading
 
 from .send_sms import SMS
-from voluntary_service_team.secure_settings import APIKEY
-from voluntary_service_team.secure_settings import TPL_ID
+
+from django.conf import settings
 
 
 class SMSThread(threading.Thread):
@@ -14,8 +14,8 @@ class SMSThread(threading.Thread):
             '''
             模板内容：【华科计算机协会】亲~你的电脑我们已经收到啦！提取码：#code1#，戳 https://huca.tech/#code# 可以查看维修进度哦~
             '''
-            self.params = {'apikey': APIKEY,
-                           'tpl_id': TPL_ID['receive'],
+            self.params = {'apikey': settings.APIKEY,
+                           'tpl_id': settings.TPL_ID['receive'],
                            'tpl_value': {"#code#": kwargs['short_link'], "#code1#": kwargs['serial_number']},
                            'mobile': receiver_mobile}
         elif status == '完成':
@@ -27,8 +27,8 @@ class SMSThread(threading.Thread):
             """
             # 注意：这里 code1 是短链接，code 是取货号，而上面一条反过来。
             # 请自行找 PM 解决
-            self.params = {'apikey': APIKEY,
-                           'tpl_id': TPL_ID['finish'],
+            self.params = {'apikey': settings.APIKEY,
+                           'tpl_id': settings.TPL_ID['finish'],
                            'tpl_value': {"#code1#": kwargs['short_link'], "#code#": kwargs['serial_number']},
                            'mobile': receiver_mobile}
         elif status == '遇到问题需反馈':
@@ -37,8 +37,8 @@ class SMSThread(threading.Thread):
             【华科计算机协会】亲~维修出现了问题嚎。原因：#reason#
             本短信可直接回复喵~
             """
-            self.params = {'apikey': APIKEY,
-                           'tpl_id': TPL_ID['trouble'],
+            self.params = {'apikey': settings.APIKEY,
+                           'tpl_id': settings.TPL_ID['trouble'],
                            'tpl_value': {"#reason#": kwargs['reason']},
                            'mobile': receiver_mobile}
         else:

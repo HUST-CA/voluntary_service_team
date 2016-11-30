@@ -3,16 +3,22 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.views.generic import View
-from django.core.exceptions import ObjectDoesNotExist
 
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import send_mail
+
+import urllib.parse
 # import string
 # import random
 import datetime
+import json
 
 from service_activity.models import ServiceActivity
+from django.conf import settings
 from .forms import ServiceObjectForm
-from .models import ServiceObject
+from .models import ServiceObject, SMS_Feedback
 from .tools.generators import ShortLink, SerialNumber
+from .tools.calc_sign import sign_good
 
 
 class ServiceFormView(View):
@@ -20,8 +26,12 @@ class ServiceFormView(View):
     redirect_view_name = 'service_inform:own_flag'
 
     def get(self, request):
-        form = ServiceObjectForm()
-        return render(request, self.template_name, {'form': form})
+        service_activity = ServiceActivity.objects.recent_activity()
+        if service_activity.flag == '已完成':
+            return HttpResponse('<h1>目前没有开放的维修活动</h1>')
+        else:
+            form = ServiceObjectForm()
+            return render(request, self.template_name, {'form': form})
 
     def post(self, request):
         send_time = datetime.datetime.now()
@@ -79,3 +89,33 @@ class OwnFlagView(View):
         if s.flag == '遇到问题需反馈':
             context['trouble'] = s.trouble
         return render(request, self.template_name, context=context)
+
+
+def sms_feedback(request):
+    if request.method == 'POST':
+        raw_sms_reply = request.POST.get('sms_reply')
+        if raw_sms_reply:
+            sms_reply_json = urllib.parse.unquote(raw_sms_reply)
+            sms_reply = json.loads(sms_reply_json)
+            if not sign_good(sms_reply, settings.APIKEY):  # validate the sign
+                print('Fake feedback!')
+                return
+            tel = sms_reply['mobile']
+            reply_time = sms_reply['reply_time']
+            text = sms_reply['text']
+            service_object = ServiceObject.objects.filter(tel=tel)[0]
+            responsible_email = service_object.service_activity.responsible_email
+            feedback = SMS_Feedback(text=text, reply_time=reply_time, service_object=service_object)
+            feedback.save()  # put the data of feedback into our db
+            # we are not going to trigger a signal,just send email in this view
+            kwargs = {'subject': '来自' + tel + '的短信回复',
+                      'message': raw_sms_reply,
+                      'from_email': 'HUSTCA <info@hustca.com>',
+                      'recipient_list': [responsible_email, ]}
+            if send_mail(**kwargs):
+                print('成功发送邮件至' + responsible_email)
+            else:
+                print('邮件发送失败')
+        else:
+            print('于', str(datetime.datetime.now()), '收取回复失败')
+        return

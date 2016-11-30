@@ -41,6 +41,7 @@ class ServiceActivity(models.Model):
     FLAGS = (('进行中', '进行中'), ('已完成', '已完成'))
     flag = models.CharField(verbose_name='状态', max_length=16, choices=FLAGS)
     int_id = models.IntegerField(verbose_name='第几次活动')
+    responsible_email = models.EmailField(verbose_name='活动负责人邮箱', max_length=128, blank=True)
 
     members = models.ManyToManyField(Member, related_name='activities', verbose_name='成员', blank=True)
 

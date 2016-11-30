@@ -42,3 +42,17 @@ class ServiceObject(models.Model):
     class Meta:
         verbose_name = '服务对象'
         verbose_name_plural = '服务对象'
+
+
+class SMS_Feedback(models.Model):
+    text = models.CharField(verbose_name='短信回复内容', max_length=256)
+    reply_time = models.DateTimeField(verbose_name='回复短信时间')
+
+    service_object = models.ForeignKey(ServiceObject, related_name='sms_feedback', verbose_name='从属哪个服务对象')
+
+    def __str__(self):
+        return self.service_object + '的短信回复'
+
+    class Meta:
+        verbose_name = '短信回复'
+        verbose_name_plural = '短信回复'
