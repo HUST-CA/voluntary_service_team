@@ -120,3 +120,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+from . import secure_settings
+
+# SMS API
+APIKEY = secure_settings.APIKEY
+TPL_ID = secure_settings.TPL_ID
+
