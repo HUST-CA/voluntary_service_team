@@ -1,13 +1,12 @@
-from django.shortcuts import render, get_object_or_404
+import urllib.parse
+
 from django.contrib import messages
-from django.http import HttpResponseRedirect, HttpResponse
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import View
 
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.mail import send_mail
-
-import urllib.parse
 # import string
 # import random
 import datetime
@@ -24,11 +23,14 @@ from .tools.calc_sign import sign_good
 class ServiceFormView(View):
     template_name = 'service_inform/service_form.html'
     redirect_view_name = 'service_inform:own_flag'
+    no_service_name = 'service_inform/no_service.html'
 
     def get(self, request):
         service_activity = ServiceActivity.objects.recent_activity()
-        if service_activity.flag == '已完成':
-            return HttpResponse('<h1>目前没有开放的维修活动</h1>')
+        if service_activity is None or service_activity.flag == '已完成':
+            # return HttpResponse('<h1>目前没有开放的维修活动</h1>')
+            messages.add_message(request, messages.WARNING, '目前没有开放的维修活动')
+            return render(request, self.no_service_name)
         else:
             form = ServiceObjectForm()
             return render(request, self.template_name, {'form': form})
@@ -41,23 +43,23 @@ class ServiceFormView(View):
         form = ServiceObjectForm(request.POST)
         if form.is_valid():
             service_object = ServiceObject(**form.cleaned_data, send_time=send_time, flag=flag)
-            try:
-                service_object.service_activity = ServiceActivity.objects.recent_activity()
-            except ObjectDoesNotExist as e:
-                messages.add_message(request, messages.WARNING, 'No Activity for now!')
-                return render(request, self.template_name, {'form': form})
+            service_object.service_activity = ServiceActivity.objects.recent_activity()
+            if service_object.service_activity:
+                service_object.save()
+                service_object.short_link = ShortLink(service_object.pk).generate()
+                service_object.serial_number = SerialNumber(service_object.pk).generate()
+                service_object.save()
+                messages.add_message(request, messages.SUCCESS, '提交成功')
 
-            service_object.save()
-            service_object.short_link = ShortLink(service_object.pk).generate()
-            service_object.serial_number = SerialNumber(service_object.pk).generate()
-            service_object.save()
-            messages.add_message(request, messages.SUCCESS, '提交成功')
+                print('生成短连接:' + service_object.short_link)
+                print('生成取货号:' + service_object.serial_number)
 
-            print('生成短连接:' + service_object.short_link)
-            print('生成取货号:' + service_object.serial_number)
-
-            return HttpResponseRedirect(
-                reverse(self.redirect_view_name, kwargs={'pk': service_object.pk, 'tel': service_object.tel}))
+                return HttpResponseRedirect(
+                    reverse(self.redirect_view_name, kwargs={'pk': service_object.pk, 'tel': service_object.tel}))
+            else:
+                # return HttpResponse('<h1>目前没有开放的维修活动</h1>')
+                messages.add_message(request, messages.WARNING, '目前没有开放的维修活动')
+                return render(request, self.no_service_name)
         else:
             messages.add_message(request, messages.WARNING, '表单有误')
             return render(request, self.template_name, {'form': form})
@@ -75,12 +77,15 @@ class ShortLinkRedirect(View):
 
 class OwnFlagView(View):
     template_name = 'service_inform/own_flag.html'
+    no_service_name = 'service_inform/no_service.html'
 
     def get(self, request, tel, pk):
         s = get_object_or_404(ServiceObject, pk=pk)
         # if the date of this service is not today, we regard it as illegal
         if datetime.date.today() != s.send_time.date():
-            return HttpResponse('<h1>该服务对象已过期</h1>')
+            messages.add_message(request, messages.WARNING, '本次活动已结束')
+            # return HttpResponse('<h1>该服务对象已过期</h1>')
+            return render(request, self.no_service_name)
         context = dict()
         context['name'] = s.name
         context['computer_model'] = s.computer_model

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block contain %}
+    <div class="middle-container">
+        <div class="middle-wrap">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.level_tag }}">
+                        <a href="#" class="close" data-dismiss="alert">&times;</a>
+                        <strong>
+                            {% if 'safe' in message.tags %}{{ message|safe }}{% else %}{{ message }}{% endif %}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <hr>
+            <p style="text-align: center">
+                <a style="color: white" href="http://www.hustca.com/">去首页看看?</a>
+            </p>
+        </div>
+    </div>
+{% endblock contain %}

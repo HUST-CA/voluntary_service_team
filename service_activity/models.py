@@ -27,7 +27,11 @@ class ServiceActivityManager(models.Manager):
 
     def recent_activity(self):
         '''返回最近一次的活动'''
-        return self.get_queryset().get(int_id=self.count_activities())
+        int_id = self.count_activities()
+        if int_id:
+            return self.get_queryset().get(int_id=int_id)
+        else:
+            return None
 
     def recent_activity_date(self):
         '''返回最近一次的活动日期'''
