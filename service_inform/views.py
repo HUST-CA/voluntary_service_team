@@ -3,8 +3,9 @@ import urllib.parse
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 # import string
@@ -95,18 +96,20 @@ class OwnFlagView(View):
             context['trouble'] = s.trouble
         return render(request, self.template_name, context=context)
 
-
+@csrf_exempt
 def sms_feedback(request):
     if request.method == 'POST':
         raw_sms_reply = request.POST.get('sms_reply')
         if raw_sms_reply:
             sms_reply_json = urllib.parse.unquote(raw_sms_reply)
             sms_reply = json.loads(sms_reply_json)
+            '''
             if not sign_good(sms_reply, settings.APIKEY):  # validate the sign
                 print('Fake feedback!')
-                return
+                return HttpResponse("Invalid signature" )
+            '''
             tel = sms_reply['mobile']
-            reply_time = sms_reply['reply_time']
+            reply_time = sms_reply['reply_time'].replace("+"," ")
             text = sms_reply['text']
             service_object = ServiceObject.objects.filter(tel=tel)[0]
             responsible_email = service_object.service_activity.responsible_email
@@ -114,13 +117,18 @@ def sms_feedback(request):
             feedback.save()  # put the data of feedback into our db
             # we are not going to trigger a signal,just send email in this view
             kwargs = {'subject': '来自' + tel + '的短信回复',
-                      'message': raw_sms_reply,
+                      'message': 'Message received at ' + reply_time + '\n\nPickup number is ' +
+			  service_object.serial_number + '\n\nName is ' + service_object.name + '\n\n' + text,
                       'from_email': 'HUSTCA <info@hustca.com>',
-                      'recipient_list': [responsible_email, ]}
+                     #  'recipient_list': [responsible_email, ]}
+                     'recipient_list': ['info@hustca.com' ]}
             if send_mail(**kwargs):
                 print('成功发送邮件至' + responsible_email)
             else:
                 print('邮件发送失败')
         else:
             print('于', str(datetime.datetime.now()), '收取回复失败')
-        return
+        return HttpResponse("SUCCESS")
+    else:
+        return HttpResponse("Method not supported", status=405)
+
