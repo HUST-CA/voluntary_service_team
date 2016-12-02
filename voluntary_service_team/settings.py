@@ -127,3 +127,8 @@ from . import secure_settings
 APIKEY = secure_settings.APIKEY
 TPL_ID = secure_settings.TPL_ID
 
+EMAIL_HOST = secure_settings.EMAIL_HOST
+EMAIL_HOST_USER = secure_settings.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = secure_settings.EMAIL_HOST_PASSWORD
+EMAIL_PORT = secure_settings.EMAIL_PORT
+EMAIL_USE_TLS = secure_settings.EMAIL_USE_TLS
