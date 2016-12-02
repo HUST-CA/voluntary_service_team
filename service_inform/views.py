@@ -33,6 +33,8 @@ class ServiceFormView(View):
             messages.add_message(request, messages.WARNING, '目前没有开放的维修活动')
             return render(request, self.no_service_name)
         else:
+            if service_activity.flag == '预约中':
+                messages.add_message(request,messages.INFO,'目前没有进行中的维修活动！<p>但是你可以预约 ' + service_activity.activity_date.strftime('%Y-%m-%d') + ' 全天</p><p>在 ' + service_activity.place +' 的维修服务</p>',extra_tags='safe')
             form = ServiceObjectForm()
             return render(request, self.template_name, {'form': form})
 
@@ -40,7 +42,7 @@ class ServiceFormView(View):
         send_time = datetime.datetime.now()
         # we don't need to use the random code
         # random_code = ''.join([(string.ascii_letters + string.digits)[x] for x in random.sample(range(0, 62), 8)])
-        flag = '修理中'
+        flag = '待确认'
         form = ServiceObjectForm(request.POST)
         if form.is_valid():
             service_object = ServiceObject(**form.cleaned_data, send_time=send_time, flag=flag)
@@ -50,7 +52,7 @@ class ServiceFormView(View):
                 service_object.short_link = ShortLink(service_object.pk).generate()
                 service_object.serial_number = SerialNumber(service_object.pk).generate()
                 service_object.save()
-                messages.add_message(request, messages.SUCCESS, '提交成功')
+                messages.add_message(request, messages.INFO, '提交成功！<p>工作人员确认后会给你的手机发送取货码～</p>',extra_tags='safe')
 
                 print('生成短连接:' + service_object.short_link)
                 print('生成取货号:' + service_object.serial_number)
@@ -79,8 +81,8 @@ class ShortLinkRedirect(View):
 class OwnFlagView(View):
     template_name = 'service_inform/own_flag.html'
     no_service_name = 'service_inform/no_service.html'
-
     def get(self, request, tel, pk):
+        service_activity = ServiceActivity.objects.recent_activity()
         s = get_object_or_404(ServiceObject, pk=pk)
         # if the date of this service is not today, we regard it as illegal
         if datetime.date.today() != s.send_time.date():
@@ -88,6 +90,7 @@ class OwnFlagView(View):
             # return HttpResponse('<h1>该服务对象已过期</h1>')
             return render(request, self.no_service_name)
         context = dict()
+        context['place'] = service_activity.place
         context['name'] = s.name
         context['computer_model'] = s.computer_model
         context['problem'] = s.problem
@@ -120,8 +123,8 @@ def sms_feedback(request):
                       'message': 'Message received at ' + reply_time + '\n\nPickup number is ' +
 			  service_object.serial_number + '\n\nName is ' + service_object.name + '\n\n' + text,
                       'from_email': 'HUSTCA <info@hustca.com>',
-                     #  'recipient_list': [responsible_email, ]}
-                     'recipient_list': ['info@hustca.com' ]}
+                      'recipient_list': [responsible_email, ]}
+                     #'recipient_list': ['info@hustca.com' ]}
             if send_mail(**kwargs):
                 print('成功发送邮件至' + responsible_email)
             else:

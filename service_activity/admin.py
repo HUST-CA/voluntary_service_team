@@ -6,7 +6,7 @@ from .models import ServiceActivity, Member
 class ServiceActivityAdmin(admin.ModelAdmin):
     list_filter = ('flag',)
     fieldsets = (
-        ('信息', {'fields': ('place', 'int_id',)}),
+        ('信息', {'fields': ('place','activity_date', 'int_id','responsible_email',)}),
         ('成员', {'fields': ('members',)}),
         ('状态', {'fields': ('flag',)}),
     )

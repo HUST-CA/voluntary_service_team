@@ -40,9 +40,9 @@ class ServiceActivityManager(models.Manager):
 
 class ServiceActivity(models.Model):
     # date_tuple = datetime.date.today().timetuple()
-    activity_date = models.DateField(verbose_name='活动日期', auto_now_add=True)
+    activity_date = models.DateField(verbose_name='活动日期', auto_now_add=False)
     place = models.CharField(verbose_name='地点', max_length=128)
-    FLAGS = (('进行中', '进行中'), ('已完成', '已完成'))
+    FLAGS = (('进行中', '进行中'), ('已完成', '已完成'),('预约中','预约中'))
     flag = models.CharField(verbose_name='状态', max_length=16, choices=FLAGS)
     int_id = models.IntegerField(verbose_name='第几次活动')
     responsible_email = models.EmailField(verbose_name='活动负责人邮箱', max_length=128, blank=True)

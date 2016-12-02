@@ -9,7 +9,21 @@
 
 <div class="middle-container">
   <div class="middle-wrap">
-    <h2>个人页面</h2>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.level_tag }}">
+                        <a href="#" class="close" data-dismiss="alert">&times;</a>
+                        <strong>
+                            {% if 'safe' in message.tags %}{{ message|safe }}{% else %}{{ message }}{% endif %}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
+    <h2>电脑信息页面</h2>
+    <div class="single-container">
+      <p>
+      本次活动地点：{{ place }}
+      </p>
+    </div>
     <div class="single-container">
       <p>
       姓名:{{ name }}

@@ -26,7 +26,7 @@ class ServiceObject(models.Model):
     problem = models.TextField(verbose_name='电脑故障')
 
     send_time = models.DateTimeField(verbose_name='送到时间', auto_now_add=True)
-    FLAGS = (('完成', '完成'), ('修理中', '修理中'), ('已取回', '已取回'), ('遇到问题需反馈', '遇到问题需反馈'))
+    FLAGS = (('完成', '完成'), ('修理中', '修理中'), ('已取回', '已取回'), ('遇到问题需反馈', '遇到问题需反馈'),('待确认','待确认'))
     flag = models.CharField(verbose_name='修理状态', max_length=64, choices=FLAGS)
     trouble = models.TextField(verbose_name='遇到的问题', blank=True)
     short_link = models.CharField(verbose_name='短链接', max_length=32)
