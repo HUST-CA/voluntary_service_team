@@ -51,7 +51,7 @@ class SMS_Feedback(models.Model):
     service_object = models.ForeignKey(ServiceObject, related_name='sms_feedback', verbose_name='从属哪个服务对象')
 
     def __str__(self):
-        return self.service_object + '的短信回复'
+        return self.service_object.name + '的短信回复'
 
     class Meta:
         verbose_name = '短信回复'
