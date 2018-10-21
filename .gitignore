@@ -1,0 +1,7 @@
+__pycache__
+pc_service.db
+send.py
+admin/node_modules
+admin/build
+.idea
+.DS_STORE

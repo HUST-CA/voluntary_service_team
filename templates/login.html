@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <style type="text/css">
+    body {
+      background-color: #DADADA;
+    }
+    body > .grid {
+      height: 100%;
+    }
+    .image {
+      margin-top: -100px;
+    }
+    .column {
+      max-width: 450px;
+    }
+  </style>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+</head>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.css" integrity="sha256-1dcYWPAIBzLgOJlRNpMFWi1aIEWZU490to6kkbDmFM8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.js" integrity="sha256-VQRL2nOqSBiLUuANrKpUCC2U6XUeJB41gbZHvknlLcE=" crossorigin="anonymous"></script>
+
+<body>
+ <div class="ui middle aligned center aligned grid">
+  <div class="column">
+    <h2 class="ui teal image header">
+        <i class="ui lock icon"> </i>
+      <div class="content">
+        登陆后台管理
+      </div>
+    </h2>
+    <form class="ui large form" method="post">
+      <div class="ui stacked segment">
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="user icon"></i>
+            <input type="text" name="username" placeholder="用户名">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="lock icon"></i>
+            <input type="password" name="password" placeholder="密码">
+          </div>
+        </div>
+          <input type="hidden" name="csrf" value="{{ csrf }}" autocomplete="off">
+        <div class="ui fluid large teal submit button" onclick="document.getElementsByTagName('form')[0].submit()">登陆</div>
+      </div>
+      <div class="ui error message"></div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

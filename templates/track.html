@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>工单查询</title>
+    <style type="text/css">
+    body {
+      background-color: #DADADA;
+    }
+    body > .grid {
+      height: 100%;
+    }
+    .image {
+      margin-top: -100px;
+    }
+    .column {
+      max-width: 450px;
+    }
+  </style>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+</head>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.css" integrity="sha256-1dcYWPAIBzLgOJlRNpMFWi1aIEWZU490to6kkbDmFM8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.js" integrity="sha256-VQRL2nOqSBiLUuANrKpUCC2U6XUeJB41gbZHvknlLcE=" crossorigin="anonymous"></script>
+
+<body>
+ <div class="ui middle aligned center aligned grid">
+     <div class="ui grid row">
+         <div style="text-align: center">
+                      <h1 style="margin-top: 10vh;">华中科技大学计算机协会</h1>
+
+                     <h3 style="margin-top:-1em; color: gray">义务维修进度查询</h3>
+
+         </div>
+     </div>
+
+     <div class="ui grid row" >
+
+         <div class="ui tablet stackable vertical steps">
+          <div class="{% if status == 0 %}active{% endif %} step">
+            <i class="angle double right icon"></i>
+            <div class="content">
+              <div class="title">接收</div>
+              <div class="description">确认电脑状态，分派工单号码。</div>
+            </div>
+          </div>
+          <div class="{% if status == 1 %}active{% elif status <1 %}disabled{% endif %} step">
+            <i class="clock outline icon"></i>
+            <div class="content">
+              <div class="title">等待维修</div>
+              <div class="description">等待分配技术人员维修</div>
+            </div>
+          </div>
+          <div class="{% if status == 2 %}active{% elif status <2 %}disabled{% endif %} step">
+            <i class="wrench icon"></i>
+            <div class="content">
+              <div class="title">维修中</div>
+              <div class="description">技术人员正在维修</div>
+            </div>
+          </div>
+             {% if status == 5 %}
+                 <div class="active step">
+                    <i class="question circle icon"></i>
+                    <div class="content">
+                      <div class="title">维修遇到问题</div>
+                      <div class="description">请查看短信并回复</div>
+                    </div>
+                 </div>
+             {% endif %}
+              <div class="{% if status == 3 %}active{% elif status <3 or status==5 %}disabled{% endif %} step">
+            <i class="ambulance icon"></i>
+            <div class="content">
+              <div class="title">请取回</div>
+              <div class="description">请凭取件码取回</div>
+            </div>
+          </div>
+             <div class="{% if status == 4 %}active{% elif status <4 or status == 5 %}disabled{% endif %} step">
+            <i class="american sign language interpreting icon"></i>
+            <div class="content">
+              <div class="title">已取回</div>
+              <div class="description">您的电脑已被取回</div>
+            </div>
+          </div>
+        </div>
+
+     </div>
+     <div class="ui grid row">
+        <div class="ui raised fluid segment">
+                    {{ message }}
+        </div>
+     </div>
+     <div class="ui grid row">
+         <div style="text-align: center;">
+                    以上信息仅供参考，具体以现场咨询为准。
+         <p/>All Right Reserved by @HUSTCA
+         </div>
+
+     </div>
+</div>
+</body>
+</html>

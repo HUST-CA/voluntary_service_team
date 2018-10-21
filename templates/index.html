@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>电脑义务维修 - 华中科技大学计算机协会</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+</head>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.css" integrity="sha256-1dcYWPAIBzLgOJlRNpMFWi1aIEWZU490to6kkbDmFM8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.js" integrity="sha256-VQRL2nOqSBiLUuANrKpUCC2U6XUeJB41gbZHvknlLcE=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        $('.ui.normal.dropdown').dropdown();
+        $('.message .close').on('click', function(){
+            $(this)
+                .closest('.message')
+                .transition('fade');
+        })
+    });
+</script>
+<body class="body" style="background: {{ color }}; max-width: 30em; margin: auto;">
+<h1 class="ui center aligned header" style="margin-top: 3em;">
+    计算机协会
+</h1>
+<h3 class="ui center aligned header" style="margin-top: -0.7em; color: gray;">
+    义务维修维修登记表
+</h3>
+<div class="ui raised padded text container segment center" style="margin-top: 2em; width: 100%;">
+    {% if success %}
+        <div class="ui message success">
+        <i class="close icon"></i>
+        <div class="header">提交成功！</div>
+            维修完毕后会给你发送短信哒～
+        </div>
+    {% endif %}
+    <div class="row">
+        <div class="ui form">
+
+            <form method="post">
+
+<div class="field">
+     <div class="ui left icon input {% if 'name' in wrong %}error{% endif %}">
+                        <input class="row" name="name" placeholder="姓名" minlength=2 value="{{ form['name'][0] }}" />
+                        <i class="user icon" ></i>
+                    </div>
+    {% if 'name' in wrong %}<div style="color: #f2543c" >{{ wrong['name'] }}</div>{% endif %}
+</div>
+<div class="field">
+
+        <div class="ui left icon input field {% if 'tel' in wrong %}error{% endif %}">
+                        <input class="row" name="tel" placeholder="手机号" minlength=11 maxlength=11 value="{{ form['tel'][0] }}" />
+                        <i class="mobile icon" ></i>
+                    </div>
+{% if 'tel' in wrong %}<div style="color: #f2543c" >{{ wrong['tel'] }}</div>{% endif %}
+    </div>
+<div class="field">
+                    <div class="ui left icon input field {% if 'model' in wrong %}error{% endif %}">
+                        <input class="row"  name="model" placeholder="电脑型号" minlength=2 value="{{ form['model'][0] }}" />
+                        <i class="laptop icon"></i>
+                    </div>
+{% if 'model' in wrong %}<div style="color: #f2543c" >{{ wrong['model'] }}</div>{% endif %}
+    </div>
+
+
+<div class="field">
+{#                    <div class="ui left icon input field ">#}
+{#                        <input class="row" name="method" placeholder="服务项目" minlength=2 value="{{ form['method'][0] }}" />#}
+
+{#    <div class="ui left icon dropdown selection multiple {% if 'method' in wrong %}error{% endif %}">#}
+{#                            <input type="hidden" name="method" />#}
+{#                            <i class="dropdown icon"></i>#}
+{#        <select multiple>#}
+{#            <option value="">维护内容</option>#}
+{#                            <option value="清灰">清灰</option>#}
+{#                            <option value="装系统">装系统</option>#}
+{#                            <option value="装软件">装软件</option>#}
+{#                            <option value="系统优化">系统优化</option>#}
+{#                            <option value="其他">其他（请在备注中注明）</option>#}
+{#        </select>#}
+{#    <i class="eraser icon"></i>#}
+{##}
+{#                        </div>#}
+    <select multiple="" name="method" class="ui left icon fluid normal dropdown ">
+            <option value=""> <i class="eraser icon"></i>维护选项</option>
+                            <option value="清灰">清灰</option>
+                            <option value="装系统">装系统</option>
+                            <option value="装软件">装软件</option>
+                            <option value="系统优化">系统优化</option>
+                            <option value="其他">其他（请在备注中注明）</option>
+
+    </select>
+
+
+                    </div>
+{% if 'method' in wrong %}<div style="color: #f2543c" >{{ wrong['method'] }}</div>{% endif %}
+    </div>
+<div class="ui segment" onclick="document.getElementById('other').focus()">
+    <label style="color: #adadad; font-size: 1.1em; margin-left: -0.2em;"> <i class="audio description icon"></i>其他描述</label>
+    <div class="field">
+    <div class="ui transparent input">
+                        <input id="other" class="row" row="2" name="other" value="{{ form['other'][0] }}"/>
+                    </div>
+    </div>
+
+    </div>
+<div class="field">
+                <button class="positive fluid ui button" type="submit" style="margin: auto">提交</button>
+</div>
+            </form>
+        </div>
+
+        </div>
+</div>
+</body>
+</html>

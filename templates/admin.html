@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>后台管理系统</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/socket.io/2.0.4/socket.io.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.css" integrity="sha256-1dcYWPAIBzLgOJlRNpMFWi1aIEWZU490to6kkbDmFM8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.js" integrity="sha256-VQRL2nOqSBiLUuANrKpUCC2U6XUeJB41gbZHvknlLcE=" crossorigin="anonymous"></script>
+
+    <style>
+        .main {
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            background-color: #eeeaee;
+        }
+        .main .frame{
+            background-color: rgba(158, 16, 13, 0.29);
+            padding: 10px 5px 20px 5px;
+            margin: 5px;
+            border-radius: 5px;
+            border: solid 1px #fff;
+        }
+        .main .frame div{
+            padding-bottom: 3px;
+            border-bottom: solid 1px #434143;
+        }
+        .main .frame .accept {
+            margin: 3px;
+            border-radius: 10px;
+        }
+        .table-caption{display:table-caption;margin:0;padding:0;font-size:16px;}  
+        .table-column-group{display:table-column-group;}  
+        .table-column{display:table-column;width:100px;}  
+        .table-row-group{display:table-row-group;}  
+        .table-row{display:table-row;}  
+        .table-row-group .table-row:hover,.table-footer-group .table-row:hover{}  
+        .table-cell{display:table-cell;padding:0 5px;}  
+        .table-header-group{display:table-header-group;font-weight:bold;}  
+        .table-footer-group{display:table-footer-group;} 
+    </style>
+</head>
+<body>
+
+<div class="ui archive modal">
+    <div class="header">确认执行归档操作吗？</div>
+    该操作将将全部记录进行隐藏。
+    <div class="actions">
+        <div class="ui black deny button" onclick="">取消</div>
+        <div class="ui red button" onclick="socket.emit('archive'); $('.ui.modal').modal('hide');">确定</div>
+    </div>
+</div>
+
+<div class="ui problem modal">
+    <div class="header">请输入问题</div>
+    <textarea id="problem"></textarea>
+    <div class="actions">
+        <div class="ui black deny button" onclick="">取消</div>
+        <div class="ui red button" onclick="socket.emit('problem',{id:record_id}); $('.ui.modal').modal('hide');">确定</div>
+    </div>
+</div>
+
+
+<script>    $(document).ready(function () {
+        $('.ui.dropdown').dropdown();
+    });</script>
+<div class="ui top attached pointing menu">
+  <div class="ui dropdown icon item">
+    <i class="wrench icon"></i>
+    <div class="menu">
+      <div class="item">
+        <i class="dropdown icon"></i>
+        <span class="text">归档</span>
+        <div class="menu">
+          <div class="item" onclick="$('.ui.archive.modal').modal({centered: false}).modal('show')">全部归档</div>
+          <div class="item disabled">查看归档(开发中)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <a class="item active">Pending</a>
+    <a class="item ">Repaired</a>
+    <a class="item ">Problem</a>
+    <a class="item ">Finished</a>
+</div>
+<div class="ui bottom attached segment">
+
+<div class="main">
+    待确认
+    <div class="frame">
+        <div class="table">
+            <div class="table-header-group">
+                <div class="table-row">
+                    <div class="table-cell">编号</div>
+                    <div class="table-cell">提交时间</div>
+                    <div class="table-cell">姓名</div>
+                    <div class="table-cell">型号</div>
+                    <div class="table-cell">请求</div>
+                    <div class="table-cell">其他</div>
+                    <div class="table-cell">操作</div>
+                </div>
+            </div> 
+            <div class="table-footer-group" id="waiting">
+
+            </div>
+        </div>
+    </div>
+    待维修
+    <div class="frame">
+        <div class="table">
+            <div class="table-header-group">
+                <div class="table-row">
+                    <div class="table-cell">编号</div>
+                    <div class="table-cell">提交时间</div>
+                    <div class="table-cell">姓名</div>
+                    <div class="table-cell">型号</div>
+                    <div class="table-cell">请求</div>
+                    <div class="table-cell">其他</div>
+                    <div class="table-cell">操作</div>
+                </div>
+            </div> 
+            <div class="table-footer-group" id="queuing">
+
+            </div>
+        </div>
+    </div>
+    维修中
+    <div class="frame">
+        <div class="table">
+            <div class="table-header-group">
+                <div class="table-row">
+                    <div class="table-cell">编号</div>
+                    <div class="table-cell">提交时间</div>
+                    <div class="table-cell">姓名</div>
+                    <div class="table-cell">型号</div>
+                    <div class="table-cell">请求</div>
+                    <div class="table-cell">其他</div>
+                    <div class="table-cell">操作</div>
+                </div>
+            </div> 
+            <div class="table-footer-group" id="repairing" >
+
+            </div>
+        </div>
+    </div>
+    已完成
+    <div class="frame">
+        <div class="table">
+            <div class="table-header-group">
+                <div class="table-row">
+                    <div class="table-cell">编号</div>
+                    <div class="table-cell">提交时间</div>
+                    <div class="table-cell">姓名</div>
+                    <div class="table-cell">型号</div>
+                    <div class="table-cell">请求</div>
+                    <div class="table-cell">其他</div>
+                    <div class="table-cell">操作</div>
+                </div>
+            </div> 
+            <div class="table-footer-group" id="finished" >
+
+            </div>
+        </div>
+    </div>
+    待回复
+    <div class="frame">
+        <div class="table">
+            <div class="table-header-group">
+                <div class="table-row">
+                    <div class="table-cell">编号</div>
+                    <div class="table-cell">提交时间</div>
+                    <div class="table-cell">姓名</div>
+                    <div class="table-cell">型号</div>
+                    <div class="table-cell">请求</div>
+                    <div class="table-cell">其他</div>
+                    <div class="table-cell">操作</div>
+                </div>
+            </div> 
+            <div class="table-footer-group" id="problem" >
+
+            </div>
+        </div>
+    </div>
+    已取回
+    <div class="frame">
+        <div class="table">
+            <div class="table-header-group">
+                <div class="table-row">
+                    <div class="table-cell">编号</div>
+                    <div class="table-cell">提交时间</div>
+                    <div class="table-cell">姓名</div>
+                    <div class="table-cell">型号</div>
+                    <div class="table-cell">请求</div>
+                    <div class="table-cell">其他</div>
+                    <div class="table-cell">操作</div>
+                </div>
+            </div> 
+            <div class="table-footer-group" id="sent" >
+
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+</body>
+<script>
+    var socket;
+    $(document).ready(
+        function() {
+            socket = io.connect('http://' + document.domain + ':' + location.port + '/manage');
+            socket.on('list', 
+            function (data) {
+                $('#waiting').empty();
+                $('#queuing').empty();
+                $('#repairing').empty();
+                $('#finished').empty();
+                $('#sent').empty();
+                $('#problem').empty();
+                data.waiting.map(
+                    function (t) {
+                        $('#waiting').append(
+                            "<div class='table-row'>"
+                                + "<div class='table-cell'>" + t.short + "</div>"
+                                + "<div class='table-cell'>" + t.time + "</div>"
+                                + "<div class='table-cell'>" + t.name + "</div>"
+                                + "<div class='table-cell'>" + t.model + "</div>"
+                                + "<div class='table-cell'>" + t.method + "</div>"
+                                + "<div class='table-cell'>" + t.other + "</div>"
+                                + "<div class='table-cell'>" + "<button id='" + t.short + "' class='receive' name='receive'>收到</button>" 
+                                + "<button id='" + t.short + "' class='reject' name='reject'>驳回</button>" + "</div>"
+                            +"</div>"
+                            );
+                    });
+                data.queuing.map(
+                    function (t) {
+                        $('#queuing').append(
+                            "<div class='table-row'>"
+                                + "<div class='table-cell'>" + t.short + "</div>"
+                                + "<div class='table-cell'>" + t.time + "</div>"
+                                + "<div class='table-cell'>" + t.name + "</div>"
+                                + "<div class='table-cell'>" + t.model + "</div>"
+                                + "<div class='table-cell'>" + t.method + "</div>"
+                                + "<div class='table-cell'>" + t.other + "</div>"
+                                + "<div class='table-cell'>" + "<button id='" + t.short + "' class='start' name='start'>开始维修</button>" + "</div>"
+                            +"</div>"
+                            );
+                    });
+                data.repairing.map(
+                    function (t) {
+                        $('#repairing').append(
+                            "<div class='table-row'>"
+                                + "<div class='table-cell'>" + t.short + "</div>"
+                                + "<div class='table-cell'>" + t.time + "</div>"
+                                + "<div class='table-cell'>" + t.name + "</div>"
+                                + "<div class='table-cell'>" + t.model + "</div>"
+                                + "<div class='table-cell'>" + t.method + "</div>"
+                                + "<div class='table-cell'>" + t.other + "</div>"
+                                + "<div class='table-cell'>" + "<button id='" + t.short + "' class='finish' name='finish'>完成</button>" + "</div>" 
+                                + "<button onclick='problem_id=t.short; $(''>有问题</button>" + "</div>"
+                            +"</div>"
+                        );
+                    });
+                data.finished.map(
+                    function (t) {
+                        $('#finished').append(
+                            "<div class='table-row'>"
+                                + "<div class='table-cell'>" + t.short + "</div>"
+                                + "<div class='table-cell'>" + t.time + "</div>"
+                                + "<div class='table-cell'>" + t.name + "</div>"
+                                + "<div class='table-cell'>" + t.model + "</div>"
+                                + "<div class='table-cell'>" + t.method + "</div>"
+                                + "<div class='table-cell'>" + t.other + "</div>"
+                                + "<div class='table-cell'>" + "<button id='" + t.short + "' class='sent' name='sent'>取回</button>" + "</div>" 
+                            +"</div>"
+                            );
+                    });
+                data.sent.map(
+                    function (t) {
+                        $('#sent').append(
+                            "<div class='table-row'>"
+                                + "<div class='table-cell'>" + t.short + "</div>"
+                                + "<div class='table-cell'>" + t.time + "</div>"
+                                + "<div class='table-cell'>" + t.name + "</div>"
+                                + "<div class='table-cell'>" + t.model + "</div>"
+                                + "<div class='table-cell'>" + t.method + "</div>"
+                                + "<div class='table-cell'>" + t.other + "</div>"
+                                + "<div class='table-cell'>" + "</div>"
+                            +"</div>"
+                        );
+                    });
+                data.problem.map(
+                    function (t) {
+                        $('#problem').append(
+                            "<div class='table-row'>"
+                                + "<div class='table-cell'>" + t.short + "</div>"
+                                + "<div class='table-cell'>" + t.time + "</div>"
+                                + "<div class='table-cell'>" + t.name + "</div>"
+                                + "<div class='table-cell'>" + t.model + "</div>"
+                                + "<div class='table-cell'>" + t.method + "</div>"
+                                + "<div class='table-cell'>" + t.other + "</div>"
+                                + "<div class='table-cell'>" + "<button id='" + t.short + "' class='repairing' name='repairing'>已回复</button>" + "</div>" 
+                            +"</div>"
+                            );
+                    });
+                $('button').click(
+                function(item){
+                    socket.emit(item.target.name, {id: item.target.id});
+                });
+            });
+            socket.on('connect', function () {
+                socket.emit('get');
+            });
+        });
+</script>
+</html>
