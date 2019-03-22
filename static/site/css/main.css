@@ -10,11 +10,21 @@ body {
   background-color: #301b56;
 }
 
+.alert {
+  line-height: 1.3em;
+}
+
 .middle-container {
   width: 100%;
   max-width: 25rem;
   margin: 0 auto;
   padding: 4rem 0;
+}
+
+@media only screen and (orientation: portrait) {
+  .middle-container {
+    padding: 1rem 0;
+  }
 }
 
 .middle-wrap {
@@ -90,7 +100,7 @@ button {
   width: 8rem;
   padding: .5rem;
   display: block;
-  margin: 2rem auto;
+  margin: 2rem auto 0.5rem auto;
   outline: none;
   -webkit-appearance: none;
   -moz-appearance: none;
