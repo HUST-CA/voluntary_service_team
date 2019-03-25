@@ -7,7 +7,6 @@ const colors = [
     "orange",
     "yellow"
 ];
-
 class Tab extends Component{
 
     componentWillMount(){
@@ -90,9 +89,10 @@ class Tab extends Component{
                             <div style={{display: 'none'}}>{i++}</div>
                             <Segment color={colors[i-1]} raised>
                                 <Label attached="top left" ribbon color={colors[i-1]}>{item[0]} </Label>
-                                <Transition.Group fluid as={Card} duration={1000} size='huge' animation="browse">
-                                {item[1].map((record)=>(
-                                    <Card fluid>
+                                <Transition.Group fluid as={Card} style={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center'}} duration={1000} size='huge' animation="browse">
+                                    {item[1].length ? <p></p> :''}
+                                    {item[1].map((record)=>(
+                                    <Card style={{maxWidth: '300px', minWidth: '200px', flex: 'auto', marginLeft: 'auto', marginRight: 'auto'}}>
                                         <Card.Content header={`Ticket: ${record['short']}`}/>
                                         <Card.Content description>
                                             <Grid celled>
@@ -131,12 +131,13 @@ class Tab extends Component{
                                     )
 
                                 )}
+                                    {item[1].length ? '' : <Card fluid>
+                                        <Card.Content extra>
+                                            No Ticket
+                                        </Card.Content>
+                                    </Card>}
                                 </Transition.Group>
-                                {item[1].length ? '' : <Card fluid>
-                                    <Card.Content extra>
-                                        No Ticket
-                                    </Card.Content>
-                                </Card>}
+
                                 </Segment>
                         </div>
                 ))}

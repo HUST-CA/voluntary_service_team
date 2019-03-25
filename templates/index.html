@@ -36,6 +36,11 @@
             维修完毕后会给你发送短信哒～
         </div>
     {% endif %}
+        <div class="ui message {% if disabled %}error{% else %}info{% endif %}">
+                    <i class="close icon"></i>
+            {{ message }}
+        </div>
+
     <div class="row">
         <div class="ui form">
 
@@ -107,7 +112,7 @@
 
     </div>
 <div class="field">
-                <button class="positive fluid ui button" type="submit" style="margin: auto">提交</button>
+                <button class="positive fluid ui button{% if disabled %} disabled {% endif %}" type="submit" style="margin: auto">提交</button>
 </div>
             </form>
         </div>

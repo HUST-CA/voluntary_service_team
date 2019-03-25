@@ -24,6 +24,13 @@ def load_user(userid):
 
 @app.route('/', methods=['GET'])
 def index():
+    e = Event.query.filter_by(active=True).first()
+    if e.running == 0:
+        message = "%s %s 预约中" % (e.time, e.location)
+    elif e.running == 1:
+        message = "%s %s 进行中" % (e.time, e.location)
+    else:
+        message = "%s %s 已结束，暂无下一场活动安排" % (e.time, e.location)
     color = choice(['#efc5ca', '#c5cfef', '#c5efea', '#deefc5', '#efdfc5', '#efd2c5'])
     form = {
         'name': '',
@@ -36,7 +43,10 @@ def index():
     if session.get('success', False):
         success = True
         session['success'] = False
-    return render_template('index.html', form=form, color=color, success=success)
+    return render_template('index.html', form=form, color=color, success=success,
+                           message=message,
+                           disabled=(e.running == 2)
+                           )
 
 
 class User(db.Model, UserMixin):
@@ -66,6 +76,7 @@ class Ticket(db.Model):
     comment = db.Column(db.String)
     short = db.Column(db.String(8))
     time = db.Column(db.Integer, default=time)
+    event = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
 
 
 class SMS(db.Model):
@@ -74,6 +85,15 @@ class SMS(db.Model):
     ticket_id = db.Column(db.Integer, db.ForeignKey('tickets.id'), nullable=False)
     ticket = db.relationship('Ticket', backref=db.backref('tickets', lazy=True))
     content = db.Column(db.String)
+
+
+class Event(db.Model):
+    __tablename__ = 'events'
+    id = db.Column(db.Integer, primary_key=True)
+    location = db.Column(db.String(20))
+    time = db.Column(db.String(40))
+    active = db.Column(db.Boolean, default=True)
+    running = db.Column(db.Integer, default=0)
 
 
 @app.route('/', methods=['POST'])
@@ -94,6 +114,7 @@ def index_p():
     code = ''.join(sample('1234567890', 6) )
     while Ticket.query.filter_by(short=code).first() is not None:
         code = ''.join(sample('1234567890', 6))
+    e = Event.query.filter_by(active=True).first().id
     ticket = Ticket(name=data['name'][0],
                     tel=data['tel'][0],
                     method=''.join([a+',' for a in data['method']]),
@@ -101,6 +122,7 @@ def index_p():
                     other=data['other'][0],
                     status=0,
                     short=code,
+                    event=e
                     )
     db.session.add(ticket)
     db.session.commit()
@@ -238,6 +260,33 @@ def archive():
     db.session.commit()
 
 
+@socketio.on('addEvent', namespace='/manage')
+def addEvent(event):
+    for i in Event.query.all():
+        i.active = False
+    e = Event()
+    e.location = event['location']
+    e.time = event['time']
+    db.session.add(e)
+    db.session.commit()
+
+
+@socketio.on('startEvent', namespace='/manage')
+def startEvent():
+    e = Event.query.filter_by(active=True).first()
+    e.running = 1
+    db.session.add(e)
+    db.session.commit()
+
+
+@socketio.on('stopEvent', namespace='/manage')
+def stopEvent():
+    e = Event.query.filter_by(active=True).first()
+    e.running = 2
+    db.session.add(e)
+    db.session.commit()
+
+
 def send_list():
     data = {
         'waiting': [],
@@ -245,8 +294,8 @@ def send_list():
         'repairing': [],
         'finished': [],
         'sent': [],
-        'problem': []
-
+        'problem': [],
+        'events': []
     }
     keys = ['waiting', 'queuing', 'repairing', 'finished', 'sent', 'problem']
     for j in range(0, 6):
@@ -261,6 +310,17 @@ def send_list():
                 'model': i.model,
                 'other': i.other,
             })
+    for e in Event.query.all():
+        desp = e.time + " " + e.location
+        if e.active:
+            desp = '*' + desp
+        if e.running == 1:
+            desp += ' - 活动中'
+        elif e.running == 0:
+            desp += ' - 预约中'
+        else:
+            desp += ' - 已结束'
+        data['events'].append(desp)
     socketio.emit('list', data, namespace='/manage')
 
 
@@ -272,6 +332,15 @@ def check(id):
     else:
         # Protect brute-force attack to get ticket number
         return render_template('track.html', status=id % 6, message="工单号： %d" % id)
+
+
+@app.route('/check')
+def check_user():
+    if current_user.is_authenticated:
+        return "success!"
+    else:
+        return "unauthenticated!", 403
+
 
 if __name__ == '__main__':
     # app.run()
