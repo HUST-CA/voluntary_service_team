@@ -16,6 +16,30 @@
     .column {
       max-width: 450px;
     }
+    @keyframes breathe {
+    0% {
+        opacity: 1;
+        box-shadow: 0 1px 2px rgba(0, 147, 223, 0.4), 0 1px 1px rgba(0, 147, 223, 0.1) inset;
+    }
+
+    100% {
+        opacity: 1;
+        border: 1px solid rgba(59, 235, 235, 0.7);
+        box-shadow: 0 1px 30px #0093df;
+    }
+    }
+    .breathe-div {
+      -webkit-animation: breathe;
+      -webkit-animation-duration: 1500ms;
+      -webkit-animation-iteration-count: infinite;
+      -webkit-animation-timing-function: ease-in-out;
+      -webkit-animation-direction: alternate;
+      animation: breathe;
+      animation-duration: 1500ms;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease-in-out;
+      animation-direction: alternate;
+    }
   </style>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
@@ -37,7 +61,8 @@
 
      <div class="ui grid row" >
 
-         <div class="ui tablet stackable vertical steps">
+         <div class="ui tablet stackable vertical steps breathe-div">
+           <div>
           <div class="{% if status == 0 %}active{% endif %} step">
             <i class="angle double right icon"></i>
             <div class="content">
@@ -83,6 +108,7 @@
             </div>
           </div>
         </div>
+      </div>
 
      </div>
      <div class="ui grid row">

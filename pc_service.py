@@ -229,7 +229,8 @@ def receive(data):
 @app.route('/back_end_point')
 @login_required
 def admin():
-    return render_template('admin.html')
+    return redirect('/console')
+    # return render_template('admin.html')
 
 
 @app.route('/logout')
